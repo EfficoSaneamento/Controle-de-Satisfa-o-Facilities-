@@ -1,83 +1,125 @@
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzszaQ3oi9jzsCUkoHKv4OBxcW6Bs65Zx7vFv4jtgQZD03sUdX6rjPMuzVHe7hGXWalAg/exec";
 
 document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("nps-form");
   const container = document.getElementById("perguntas-container");
+  const form = document.getElementById("nps-form");
   const statusBox = document.getElementById("status");
 
-  const escala15 = (name, na = false) => `
-    <div style="display:flex; gap:12px; margin:8px 0; flex-wrap:wrap;">
-      ${[1,2,3,4,5].map(v => `
-        <label><input type="radio" name="${name}" value="${v}" required> ${v}</label>
-      `).join("")}
-      ${na ? `<label><input type="radio" name="${name}" value="NA"> Não se aplica</label>` : ""}
-    </div>
-  `;
+  const perguntas = [
+    {
+      titulo: "Avaliação Geral",
+      pergunta: "De forma geral, como você avalia a área de Facilities?",
+      name: "avaliacao_geral",
+    },
+    {
+      titulo: "Ambiente de Trabalho",
+      pergunta: "Os serviços de Facilities contribuem para um ambiente de trabalho adequado e produtivo?",
+      name: "ambiente_trabalho",
+    },
+    {
+      titulo: "Limpeza",
+      pergunta: "Como você avalia a limpeza e conservação dos ambientes?",
+      name: "limpeza",
+    },
+    {
+      titulo: "Manutenção",
+      pergunta: "Como você avalia a manutenção predial (elétrica, hidráulica, ar-condicionado etc.)?",
+      name: "manutencao",
+    },
+    {
+      titulo: "Atendimento",
+      pergunta: "A equipe de Facilities é acessível e cordial?",
+      name: "atendimento",
+    }
+  ];
 
-  container.innerHTML = `
-    <h2>Pesquisa de Satisfação – Área de Facilities</h2>
+  perguntas.forEach((p, index) => {
+    const section = document.createElement("section");
+    section.className = "question";
+    section.style.display = index === 0 ? "block" : "none";
 
-    <h3>1. Avaliação Geral</h3>
-    <p>De forma geral, qual é o seu nível de satisfação com a área de Facilities?</p>
-    ${escala15("geral")}
-    <textarea name="geral_comentario" placeholder="Se sua nota foi 1, 2 ou 3, explique o motivo"
-      style="width:100%; min-height:80px;"></textarea>
+    section.innerHTML = `
+      <h2>${p.titulo}</h2>
 
-    <p>Os serviços de Facilities contribuem para que você realize seu trabalho com conforto e segurança?</p>
-    ${escala15("conforto_seguranca")}
+      <label>${p.pergunta}</label>
 
-    <h3>2. Avaliação dos Serviços</h3>
-    <p>Limpeza e conservação</p>${escala15("limpeza")}
-    <p>Manutenção predial</p>${escala15("manutencao")}
-    <p>Organização e conforto dos espaços</p>${escala15("organizacao")}
-    <p>Infraestrutura</p>${escala15("infraestrutura")}
-    <p>Copa / Refeitório</p>${escala15("copa", true)}
-    <p>Segurança patrimonial</p>${escala15("seguranca", true)}
+      <div class="nps-scale">
+        ${Array.from({ length: 11 }, (_, i) => `
+          <label>
+            ${i}
+            <input type="radio" name="${p.name}" value="${i}" required>
+          </label>
+        `).join("")}
+      </div>
 
-    <textarea name="servicos_comentario"
-      placeholder="Explique se avaliou algum serviço com nota 1, 2 ou 3"
-      style="width:100%; min-height:80px;"></textarea>
+      <div class="justificativa" style="display:none;">
+        <label>Por favor, justifique sua nota:</label>
+        <textarea name="${p.name}_justificativa"></textarea>
+      </div>
+    `;
 
-    <h3>3. Atendimento e Comunicação</h3>
-    <p>Cordialidade da equipe</p>${escala15("cordialidade")}
-    <p>Prazo de atendimento</p>${escala15("prazo")}
-    <p>Clareza da comunicação</p>${escala15("comunicacao")}
-    <p>Facilidade de acionamento</p>${escala15("facilidade")}
+    container.appendChild(section);
 
-    <textarea name="atendimento_comentario"
-      placeholder="Explique se avaliou algum item com nota 1, 2 ou 3"
-      style="width:100%; min-height:80px;"></textarea>
+    const radios = section.querySelectorAll(`input[type="radio"]`);
+    const justificativa = section.querySelector(".justificativa");
 
-    <h3>4. Prioridades</h3>
-    <p>Selecione até 3 serviços mais críticos</p>
-    ${["Limpeza","Manutenção","Infraestrutura","Segurança","Atendimento","Frota","Telefonia","Agendamento de Viagens"]
-      .map(v => `<label><input type="checkbox" name="prioridades" value="${v}"> ${v}</label><br>`).join("")}
+    radios.forEach(radio => {
+      radio.addEventListener("change", () => {
+        const valor = Number(radio.value);
 
-    <textarea name="area_melhoria" placeholder="Qual serviço mais precisa de melhorias?"
-      style="width:100%; min-height:80px;"></textarea>
+        // Mostra justificativa se nota <= 3
+        if (valor <= 3) {
+          justificativa.style.display = "block";
+          justificativa.querySelector("textarea").required = true;
+        } else {
+          justificativa.style.display = "none";
+          justificativa.querySelector("textarea").required = false;
+        }
 
-    <h3>5. Avaliação Final</h3>
-    <textarea name="manter" placeholder="O que deveria ser mantido?"
-      style="width:100%; min-height:80px;"></textarea>
+        // Mostra próxima pergunta
+        const proxima = container.children[index + 1];
+        if (proxima) {
+          proxima.style.display = "block";
+          proxima.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      });
+    });
+  });
 
-    <textarea name="mudar" placeholder="Se pudesse mudar uma coisa, o que seria?"
-      style="width:100%; min-height:80px;"></textarea>
-  `;
-
+  // ENVIO DO FORMULÁRIO
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    statusBox.textContent = "Enviando...";
 
-    const body = new URLSearchParams(new FormData(form));
-    const res = await fetch(WEB_APP_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: body.toString()
-    });
+    statusBox.textContent = "Enviando sua avaliação...";
+    statusBox.className = "";
 
-    const data = await res.json();
-    if (data.ok) window.location.href = "agradecimento.html";
-    else statusBox.textContent = "Erro ao enviar";
+    const formData = new FormData(form);
+    const body = new URLSearchParams(formData);
+
+    try {
+      const response = await fetch(WEB_APP_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+        },
+        body: body.toString()
+      });
+
+      const data = await response.json();
+
+      if (data.ok) {
+        statusBox.textContent = "Avaliação enviada com sucesso!";
+        statusBox.className = "success";
+        form.reset();
+      } else {
+        statusBox.textContent = "Erro ao enviar avaliação.";
+        statusBox.className = "error";
+      }
+
+    } catch (err) {
+      statusBox.textContent = "Erro ao enviar. Tente novamente.";
+      statusBox.className = "error";
+    }
   });
 });
 
