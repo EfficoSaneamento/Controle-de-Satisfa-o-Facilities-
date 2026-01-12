@@ -1,34 +1,11 @@
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyvfjsPVf7W2tM0HLJ6VeJuDElcbTKQGLPyoFJ6KNBEGlt2AFfmXe3HW1UloJBVctol_Q/exec";
-
-// 🔹 Tokens válidos
-const TOKEN_MAP = {
-  "FACILITIES": "FACILITIES",
-};
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxJOTN1epOeaiI63ZUoRxdemGww3HcfxN8URslYkdckC4aBl8UoBvMGi5rAt2vHpctBRA/exec";
 
 document.addEventListener("DOMContentLoaded", () => {
   console.log("✅ Script carregado");
 
-  const qs = new URLSearchParams(window.location.search);
-  const token = qs.get("token")
-    ?.trim()
-    .toUpperCase()
-    .replace(/[()|]/g, "")
-    .replace(/\s+/g, "") || "";
-
-  console.log("🔑 Token recebido:", token);
-
-  const departamento = TOKEN_MAP[token];
-  if (!departamento) {
-    alert("Token inválido. Verifique o link de acesso.");
-    return;
-  }
-
   const form = document.getElementById("nps-form");
   const statusBox = document.getElementById("status");
   const container = document.getElementById("perguntas-container");
-
-  // Campo oculto
-  document.getElementById("token").value = token;
 
   // 🔹 Geração do formulário
   const section = document.createElement("section");
@@ -131,4 +108,3 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
-
