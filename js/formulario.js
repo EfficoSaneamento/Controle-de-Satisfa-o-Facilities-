@@ -1,110 +1,83 @@
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxJOTN1epOeaiI63ZUoRxdemGww3HcfxN8URslYkdckC4aBl8UoBvMGi5rAt2vHpctBRA/exec";
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzszaQ3oi9jzsCUkoHKv4OBxcW6Bs65Zx7vFv4jtgQZD03sUdX6rjPMuzVHe7hGXWalAg/exec";
 
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("✅ Script carregado");
-
   const form = document.getElementById("nps-form");
-  const statusBox = document.getElementById("status");
   const container = document.getElementById("perguntas-container");
+  const statusBox = document.getElementById("status");
 
-  // 🔹 Geração do formulário
-  const section = document.createElement("section");
-  section.innerHTML = `
-    <h2 style="font-size: 1.6rem; margin-bottom: 1rem;">
-      Avaliação da Equipe de Facilities
-    </h2>
-
-    <!-- Pergunta NPS -->
-    <label style="font-weight:600;">
-      1. Em uma escala de 0 a 10, o quanto você recomendaria a equipe de Facilities para um colega de trabalho?
-    </label>
-
-    <div class="nps-scale" style="display:flex; flex-wrap:wrap; justify-content:space-between; margin:1rem 0;">
-      ${Array.from({ length: 11 }, (_, i) => `
-        <label style="flex:1 0 8%; text-align:center;">
-          ${i}<br>
-          <input type="radio" name="nps_facilities" value="${i}" required>
-        </label>
+  const escala15 = (name, na = false) => `
+    <div style="display:flex; gap:12px; margin:8px 0; flex-wrap:wrap;">
+      ${[1,2,3,4,5].map(v => `
+        <label><input type="radio" name="${name}" value="${v}" required> ${v}</label>
       `).join("")}
+      ${na ? `<label><input type="radio" name="${name}" value="NA"> Não se aplica</label>` : ""}
     </div>
-
-    <!-- Motivo da nota -->
-    <label style="font-weight:600;">
-      2. O que mais influenciou a nota que você deu?
-    </label>
-    <textarea
-      name="motivo_nota"
-      placeholder="Explique o motivo da sua avaliação"
-      style="width:100%; min-height:110px; margin-top:6px; padding:10px;"
-      required
-    ></textarea>
-
-    <!-- Pontos fortes -->
-    <label style="font-weight:600; margin-top:1rem;">
-      3. Quais são os principais pontos fortes da equipe de Facilities?
-    </label>
-    <textarea
-      name="pontos_fortes"
-      placeholder="Ex.: agilidade, cordialidade, organização..."
-      style="width:100%; min-height:110px; margin-top:6px; padding:10px;"
-    ></textarea>
-
-    <!-- Oportunidades de melhoria -->
-    <label style="font-weight:600; margin-top:1rem;">
-      4. O que a equipe de Facilities poderia melhorar?
-    </label>
-    <textarea
-      name="oportunidades_melhoria"
-      placeholder="Sua sugestão é muito importante"
-      style="width:100%; min-height:110px; margin-top:6px; padding:10px;"
-    ></textarea>
-
-    <!-- Comentário final -->
-    <label style="font-weight:600; margin-top:1rem;">
-      5. Deseja deixar algum comentário, sugestão ou elogio adicional?
-    </label>
-    <textarea
-      name="comentario_final"
-      placeholder="Espaço livre para comentários"
-      style="width:100%; min-height:110px; margin-top:6px; padding:10px;"
-    ></textarea>
   `;
 
-  container.appendChild(section);
+  container.innerHTML = `
+    <h2>Pesquisa de Satisfação – Área de Facilities</h2>
 
-  // 🔹 Envio do formulário
+    <h3>1. Avaliação Geral</h3>
+    <p>De forma geral, qual é o seu nível de satisfação com a área de Facilities?</p>
+    ${escala15("geral")}
+    <textarea name="geral_comentario" placeholder="Se sua nota foi 1, 2 ou 3, explique o motivo"
+      style="width:100%; min-height:80px;"></textarea>
+
+    <p>Os serviços de Facilities contribuem para que você realize seu trabalho com conforto e segurança?</p>
+    ${escala15("conforto_seguranca")}
+
+    <h3>2. Avaliação dos Serviços</h3>
+    <p>Limpeza e conservação</p>${escala15("limpeza")}
+    <p>Manutenção predial</p>${escala15("manutencao")}
+    <p>Organização e conforto dos espaços</p>${escala15("organizacao")}
+    <p>Infraestrutura</p>${escala15("infraestrutura")}
+    <p>Copa / Refeitório</p>${escala15("copa", true)}
+    <p>Segurança patrimonial</p>${escala15("seguranca", true)}
+
+    <textarea name="servicos_comentario"
+      placeholder="Explique se avaliou algum serviço com nota 1, 2 ou 3"
+      style="width:100%; min-height:80px;"></textarea>
+
+    <h3>3. Atendimento e Comunicação</h3>
+    <p>Cordialidade da equipe</p>${escala15("cordialidade")}
+    <p>Prazo de atendimento</p>${escala15("prazo")}
+    <p>Clareza da comunicação</p>${escala15("comunicacao")}
+    <p>Facilidade de acionamento</p>${escala15("facilidade")}
+
+    <textarea name="atendimento_comentario"
+      placeholder="Explique se avaliou algum item com nota 1, 2 ou 3"
+      style="width:100%; min-height:80px;"></textarea>
+
+    <h3>4. Prioridades</h3>
+    <p>Selecione até 3 serviços mais críticos</p>
+    ${["Limpeza","Manutenção","Infraestrutura","Segurança","Atendimento","Frota","Telefonia","Agendamento de Viagens"]
+      .map(v => `<label><input type="checkbox" name="prioridades" value="${v}"> ${v}</label><br>`).join("")}
+
+    <textarea name="area_melhoria" placeholder="Qual serviço mais precisa de melhorias?"
+      style="width:100%; min-height:80px;"></textarea>
+
+    <h3>5. Avaliação Final</h3>
+    <textarea name="manter" placeholder="O que deveria ser mantido?"
+      style="width:100%; min-height:80px;"></textarea>
+
+    <textarea name="mudar" placeholder="Se pudesse mudar uma coisa, o que seria?"
+      style="width:100%; min-height:80px;"></textarea>
+  `;
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    statusBox.textContent = "Enviando...";
 
-    statusBox.textContent = "Enviando sua avaliação...";
-    statusBox.className = "";
+    const body = new URLSearchParams(new FormData(form));
+    const res = await fetch(WEB_APP_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: body.toString()
+    });
 
-    const formData = new FormData(form);
-    const body = new URLSearchParams(formData);
-
-    try {
-      const response = await fetch(WEB_APP_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
-        },
-        body: body.toString()
-      });
-
-      const data = await response.json();
-      console.log("📨 Resposta:", data);
-
-      if (data.ok) {
-        window.location.href = "agradecimento.html";
-      } else {
-        statusBox.textContent = "⚠️ Erro: " + (data.error || "Erro desconhecido");
-        statusBox.className = "error";
-      }
-
-    } catch (err) {
-      console.error("❌ Erro:", err);
-      statusBox.textContent = "❌ Falha ao enviar. Tente novamente.";
-      statusBox.className = "error";
-    }
+    const data = await res.json();
+    if (data.ok) window.location.href = "agradecimento.html";
+    else statusBox.textContent = "Erro ao enviar";
   });
 });
+
