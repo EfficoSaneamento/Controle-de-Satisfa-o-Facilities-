@@ -1,11 +1,14 @@
 const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzszaQ3oi9jzsCUkoHKv4OBxcW6Bs65Zx7vFv4jtgQZD03sUdX6rjPMuzVHe7hGXWalAg/exec";
 
 const perguntas = [
-  { titulo: "Avaliação Geral", texto: "Como você avalia a área de Facilities?", nome: "avaliacao_geral" },
-  { titulo: "Ambiente", texto: "Os serviços contribuem para um ambiente produtivo?", nome: "ambiente" },
-  { titulo: "Limpeza", texto: "Como avalia a limpeza dos ambientes?", nome: "limpeza" },
-  { titulo: "Manutenção", texto: "Como avalia a manutenção predial?", nome: "manutencao" },
-  { titulo: "Atendimento", texto: "A equipe é acessível e cordial?", nome: "atendimento" }
+  { titulo: "Avaliação Geral", texto: "De forma geral, como você avalia os serviços prestados pela área de Facilities?", nome: "avaliacao_geral" },
+  { titulo: "Ambiente", texto: "Em que medida os serviços prestados contribuem para um ambiente de trabalho produtivo?", nome: "ambiente" },
+  { titulo: "Limpeza", texto: "Como você avalia a qualidade e a frequência da limpeza nos ambientes?", nome: "limpeza" },
+  { titulo: "Manutenção", texto: "Como você avalia a agilidade e a eficácia da manutenção predial?", nome: "manutencao" },
+  { titulo: "Atendimento", texto: "Como você avalia a cordialidade e a prontidão da equipe de atendimento?", nome: "atendimento" },
+  { titulo: "Gestão de Frota", texto: "Como você avalia o processo de solicitação e a qualidade dos veículos da frota?", nome: "frota"},
+  { titulo: "Viagens", texto: "Como você avalia a eficiência no processo de reserva de passagens e hospedagens?", nome: "viagens"},
+  { titulo: "Ativos e Equipamentos", texto: "Como você avalia o controle e a entrega de equipamentos (celulares, notebooks e linhas)?", nome: "equipamentos"}
 ];
 
 const container = document.getElementById("perguntas-container");
