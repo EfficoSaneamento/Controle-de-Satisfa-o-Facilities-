@@ -1,181 +1,112 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html>
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Pesquisa de Satisfação – Facilities</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  <style>
-    * {
-      box-sizing: border-box;
-      font-family: 'Inter', sans-serif;
-    }
-
-    body {
-      background: #f1f5f9;
-      padding: 2rem;
-    }
-
-    form {
-      max-width: 720px;
-      margin: auto;
-      background: #fff;
-      padding: 2.5rem;
-      border-radius: 20px;
-      box-shadow: 0 20px 40px rgba(0,0,0,.08);
-    }
-
-    h1 {
-      font-size: 1.6rem;
-      text-align: center;
-    }
-
-    .subtitle {
-      color: #475569;
-      text-align: center;
-      margin: 1rem 0 2rem;
-      line-height: 1.5;
-    }
-
-    fieldset {
-      border: none;
-      padding: 0;
-    }
-
-    section {
-      background: #fff;
-      border-radius: 18px;
-      padding: 2rem;
-      margin-top: 2rem;
-      box-shadow: 0 15px 30px rgba(0,0,0,.06);
-      display: none;
-      animation: fadeUp .4s ease;
-    }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    h2 {
-      font-size: 1.2rem;
-      margin-bottom: .5rem;
-    }
-
-    label {
-      font-weight: 600;
-      color: #0f172a;
-    }
-
-    .nps-scale {
-      display: flex;
-      justify-content: space-between;
-      margin: 1.2rem 0;
-      gap: 10px;
-    }
-
-    .nps-scale label {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      font-size: .75rem;
-      color: #64748b;
-    }
-
-    .nps-scale input {
-      appearance: none;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      border: 2px solid #e5e7eb;
-      cursor: pointer;
-      transition: .25s;
-    }
-
-    .nps-scale input:hover {
-      transform: translateY(-2px);
-      border-color: #00ffd5;
-    }
-
-    .nps-scale input:checked {
-      background: #00ffd5;
-      border-color: #00ffd5;
-      box-shadow: 0 0 0 6px rgba(0,255,213,.25);
-    }
-
-    .nps-scale input[value="1"]:checked,
-    .nps-scale input[value="2"]:checked {
-      background: #ff0000;
-      border-color: #ef4444;
-      box-shadow: 0 0 0 6px rgba(239,68,68,.25);
-    }
-
-    .justificativa {
-      margin-top: 1rem;
-      display: none;
-    }
-
-    .justificativa label {
-      color: #b91c1c;
-      font-size: .9rem;
-    }
-
-    textarea {
-      width: 100%;
-      min-height: 90px;
-      padding: 12px;
-      border-radius: 12px;
-      border: 1px solid #e5e7eb;
-      margin-top: .5rem;
-    }
-
-    button {
-      width: 100%;
-      margin-top: 3rem;
-      padding: 1rem;
-      border-radius: 14px;
-      border: none;
-      background: #00ffd5;
-      font-weight: 600;
-      cursor: pointer;
-      transition: .2s;
-    }
-
-    button:hover {
-      filter: brightness(.95);
-      transform: translateY(-1px);
-    }
-
-    #status {
-      margin-top: 1.5rem;
-      text-align: center;
-      font-weight: 600;
-    }
-
-    @media (max-width: 480px) {
-      form { padding: 1.5rem; }
-      .nps-scale input { width: 42px; height: 42px; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Pesquisa de Satisfação Facilities</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 20px auto; padding: 20px; line-height: 1.6; }
+        .pergunta-bloco { margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .opcoes { display: flex; gap: 10px; margin-top: 5px; }
+        label { font-weight: bold; display: block; }
+        .justificativa-area { margin-top: 20px; display: none; }
+        textarea { width: 100%; height: 80px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #0056b3; }
+        .nota-label { display: flex; flex-direction: column; align-items: center; font-weight: normal; font-size: 12px; }
+    </style>
 </head>
-
 <body>
-<form id="nps-form">
-  <h1>Pesquisa de Satisfação – Facilities</h1>
 
-  <p class="subtitle">
-    Avalie sua experiência.  
-    Escala de <strong>1 (muito insatisfeito)</strong> a <strong>5 (muito satisfeito)</strong>.
-  </p>
+    <h2>Pesquisa de Satisfação - Facilities</h2>
+    <form id="formPesquisa">
+        <div id="containerPerguntas"></div>
 
-  <fieldset id="perguntas-container"></fieldset>
+        <div id="blocoJustificativa" class="justificativa-area">
+            <label>Por favor, justifique sua avaliação negativa:*</label>
+            <textarea id="justificativa" placeholder="Conte-nos o que podemos melhorar..."></textarea>
+        </div>
 
-  <button type="submit">Enviar Pesquisa</button>
-  <div id="status"></div>
-</form>
+        <br>
+        <button type="submit" id="btnEnviar">Enviar Avaliação</button>
+    </form>
 
-<script src="js/formulario.js"></script>
+    <script>
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxUcBOHz2Br_VGdc6slepinlW31sYIePTaAqM4WlOa3NgbLYbsQi3s1Qpwvt_uHmXs9eg/exec';
+
+        const perguntas = [
+            { titulo: "Avaliação Geral", texto: "Como você avalia a área de Facilities?", nome: "avaliacao_geral" },
+            { titulo: "Ambiente", texto: "Os serviços contribuem para um ambiente produtivo?", nome: "ambiente" },
+            { titulo: "Limpeza", texto: "Como avalia a limpeza dos ambientes?", nome: "limpeza" },
+            { titulo: "Manutenção", texto: "Como avalia a manutenção predial?", nome: "manutencao" },
+            { titulo: "Atendimento", texto: "A equipe é acessível e cordial?", nome: "atendimento" },
+            { titulo: "Frota", texto: "Avaliação das solicitações de frota:", nome: "frota" },
+            { titulo: "Viagens", texto: "Avaliação de passagens e hospedagens:", nome: "viagens" },
+            { titulo: "Equipamentos", texto: "Controle de equipamentos (Celulares/Notebooks):", nome: "equipamentos" }
+        ];
+
+        const container = document.getElementById('containerPerguntas');
+
+        // Renderiza as perguntas
+        perguntas.forEach(p => {
+            const div = document.createElement('div');
+            div.className = 'pergunta-bloco';
+            div.innerHTML = `
+                <label>${p.titulo}</label>
+                <small>${p.texto}</small>
+                <div class="opcoes">
+                    ${[1, 2, 3, 4, 5].map(nota => `
+                        <label class="nota-label">
+                            <input type="radio" name="${p.nome}" value="${nota}" required onclick="verificarNotas()">
+                            ${nota}
+                        </label>
+                    `).join('')}
+                </div>
+            `;
+            container.appendChild(div);
+        });
+
+        // Mostra justificativa se houver nota 1 ou 2
+        function verificarNotas() {
+            const formData = new FormData(document.getElementById('formPesquisa'));
+            let temNotaBaixa = false;
+            for (let value of formData.values()) {
+                if (parseInt(value) <= 2) temNotaBaixa = true;
+            }
+            document.getElementById('blocoJustificativa').style.display = temNotaBaixa ? 'block' : 'none';
+        }
+
+        // Envio do formulário
+        document.getElementById('formPesquisa').addEventListener('submit', e => {
+            e.preventDefault();
+            const btn = document.getElementById('btnEnviar');
+            btn.disabled = true;
+            btn.innerText = "Enviando...";
+
+            const formData = new FormData(e.target);
+            const dados = Object.fromEntries(formData.entries());
+            dados.justificativa = document.getElementById('justificativa').value;
+
+            // Validação da Justificativa
+            let temNotaBaixa = Object.values(dados).some(v => parseInt(v) <= 2);
+            if (temNotaBaixa && dados.justificativa.trim().length < 5) {
+                alert("Por favor, preencha a justificativa para as notas baixas.");
+                btn.disabled = false;
+                btn.innerText = "Enviar Avaliação";
+                return;
+            }
+
+            fetch(scriptURL, { method: 'POST', body: JSON.stringify(dados)})
+                .then(response => {
+                    alert("Obrigado pela sua participação!");
+                    e.target.reset();
+                    document.getElementById('blocoJustificativa').style.display = 'none';
+                })
+                .catch(error => alert("Erro ao enviar! Tente novamente."))
+                .finally(() => {
+                    btn.disabled = false;
+                    btn.innerText = "Enviar Avaliação";
+                });
+        });
+    </script>
 </body>
 </html>
