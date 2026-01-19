@@ -9,105 +9,112 @@
         .radio-card:checked + .radio-label {
             background-color: #2563eb; color: white; border-color: #2563eb; transform: scale(1.05);
         }
+        .justificativa-input { transition: all 0.3s ease; }
     </style>
 </head>
-<body class="bg-slate-50 p-4">
+<body class="bg-slate-100 p-4">
 
-    <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
-        <div class="bg-blue-600 p-6 text-white">
-            <h1 class="text-xl font-bold">Avaliação de Serviços Facilities</h1>
-            <p class="text-sm opacity-90">Sua nota ajuda a direcionar nossas melhorias.</p>
+    <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
+        <div class="bg-blue-700 p-8 text-white text-center">
+            <h1 class="text-2xl font-bold">Pesquisa de Satisfação</h1>
+            <p class="text-blue-100 mt-2">Sua opinião ajuda a construir um ambiente melhor.</p>
         </div>
 
-        <form id="formPesquisa" class="p-6 space-y-6">
-            <div id="containerPerguntas" class="space-y-6"></div>
+        <form id="formPesquisa" class="p-6 space-y-10">
+            <div id="containerPerguntas" class="space-y-10"></div>
 
-            <div id="blocoJustificativa" class="hidden space-y-3 p-4 bg-orange-50 rounded-xl border border-orange-200">
-                <label class="block text-orange-800 font-bold text-sm">
-                    Justificativa Obrigatória *
-                </label>
-                <p class="text-xs text-orange-700">Identificamos uma nota baixa. Por favor, descreva o motivo:</p>
-                <textarea id="justificativa" class="w-full p-3 border border-orange-300 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none text-sm" rows="3"></textarea>
-            </div>
-
-            <button type="submit" id="btnEnviar" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl transition-all disabled:bg-slate-300">
-                Finalizar Pesquisa
+            <button type="submit" id="btnEnviar" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl shadow-lg transition-all active:scale-95 disabled:bg-slate-300 text-lg">
+                Enviar Avaliação Completa
             </button>
         </form>
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbwExs94SQyLIkoILheIc7yCxWOG4ysnOCUwQl1q3v58mPFIP9cOEuwM49SgjaSMIiuQZg/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbxzC90vCg1wkepGMaSNn7BNqnC_36ZXaEzrQzLWrcKB8FPeFaLVGpf25imlJVdzddej/exec';
 
         const perguntas = [
-            { titulo: "Avaliação Geral", texto: "Satisfação geral com os serviços", nome: "avaliacao_geral" },
-            { titulo: "Ambiente", texto: "Contribuição para produtividade", nome: "ambiente" },
-            { titulo: "Limpeza", texto: "Qualidade e frequência da limpeza", nome: "limpeza" },
-            { titulo: "Manutenção", texto: "Agilidade nos reparos prediais", nome: "manutencao" },
-            { titulo: "Atendimento", texto: "Cordialidade da equipe", nome: "atendimento" },
-            { titulo: "Frota", texto: "Locação e estado dos veículos", nome: "frota" },
-            { titulo: "Viagens", texto: "Passagens e hospedagens", nome: "viagens" },
-            { titulo: "Equipamentos", texto: "Entrega e controle de ativos", nome: "equipamentos" }
+            { titulo: "Avaliação Geral", nome: "avaliacao_geral" },
+            { titulo: "Ambiente", nome: "ambiente" },
+            { titulo: "Limpeza", nome: "limpeza" },
+            { titulo: "Manutenção", nome: "manutencao" },
+            { titulo: "Atendimento", nome: "atendimento" },
+            { titulo: "Gestão de Frota", nome: "frota" },
+            { titulo: "Viagens", nome: "viagens" },
+            { titulo: "Equipamentos", nome: "equipamentos" }
         ];
 
-        // Renderização
         const container = document.getElementById('containerPerguntas');
+
         perguntas.forEach(p => {
             const div = document.createElement('div');
+            div.className = "pergunta-wrapper border-b border-slate-100 pb-8";
             div.innerHTML = `
-                <div class="mb-2">
-                    <span class="block font-bold text-slate-700">${p.titulo}</span>
-                    <span class="text-xs text-slate-500">${p.texto}</span>
+                <div class="mb-4">
+                    <span class="text-lg font-bold text-slate-800">${p.titulo}</span>
                 </div>
                 <div class="flex justify-between gap-2">
                     ${[1, 2, 3, 4, 5].map(n => `
                         <div class="flex-1">
-                            <input type="radio" name="${p.nome}" id="${p.nome}_${n}" value="${n}" class="hidden radio-card" required onchange="verificarLógica()">
-                            <label for="${p.nome}_${n}" class="radio-label flex items-center justify-center p-3 border-2 border-slate-200 rounded-lg cursor-pointer font-bold text-slate-600 hover:bg-slate-50 transition-all">${n}</label>
+                            <input type="radio" name="${p.nome}" id="${p.nome}_${n}" value="${n}" class="hidden radio-card" required onchange="toggleJustificativa('${p.nome}', ${n})">
+                            <label for="${p.nome}_${n}" class="radio-label flex items-center justify-center p-4 border-2 border-slate-200 rounded-xl cursor-pointer font-bold text-slate-600 hover:bg-slate-50 transition-all text-xl">${n}</label>
                         </div>
                     `).join('')}
+                </div>
+                <div id="box_just_${p.nome}" class="hidden mt-4 animate-pulse">
+                    <textarea 
+                        name="just_${p.nome}" 
+                        id="input_just_${p.nome}"
+                        placeholder="Por favor, explique o motivo da nota ${p.titulo}..."
+                        class="w-full p-3 bg-red-50 border border-red-200 rounded-lg outline-none focus:ring-2 focus:ring-red-400 text-sm"
+                    ></textarea>
                 </div>
             `;
             container.appendChild(div);
         });
 
-        // Lógica de aparecer justificativa
-        function verificarLógica() {
-            const dados = new FormData(document.getElementById('formPesquisa'));
-            let precisaJustificar = false;
-            for (let v of dados.values()) {
-                if (parseInt(v) <= 2) precisaJustificar = true;
+        function toggleJustificativa(nome, nota) {
+            const box = document.getElementById(`box_just_${nome}`);
+            const input = document.getElementById(`input_just_${nome}`);
+            if (nota <= 2) {
+                box.classList.remove('hidden');
+                input.setAttribute('required', 'true');
+            } else {
+                box.classList.add('hidden');
+                input.removeAttribute('required');
+                input.value = ""; // Limpa se mudar para nota alta
             }
-            
-            const bloco = document.getElementById('blocoJustificativa');
-            bloco.classList.toggle('hidden', !precisaJustificar);
         }
 
-        // Validação no envio
         document.getElementById('formPesquisa').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btnEnviar');
             const formData = new FormData(e.target);
             const dados = Object.fromEntries(formData.entries());
-            const justificativa = document.getElementById('justificativa').value.trim();
 
-            let temNotaBaixa = Object.values(dados).some(v => parseInt(v) <= 2);
+            // Validação extra de segurança
+            let erros = [];
+            perguntas.forEach(p => {
+                const nota = parseInt(dados[p.nome]);
+                const justificativa = dados[`just_${p.nome}`];
+                if (nota <= 2 && (!justificativa || justificativa.trim().length < 4)) {
+                    erros.push(`A justificativa para "${p.titulo}" é obrigatória.`);
+                }
+            });
 
-            if (temNotaBaixa && justificativa.length < 5) {
-                alert("⚠️ Atenção: Para notas 1 ou 2, a justificativa é obrigatória para que possamos melhorar.");
+            if (erros.length > 0) {
+                alert("⚠️ Erro:\n" + erros.join("\n"));
                 return;
             }
 
             btn.disabled = true;
-            btn.innerText = "Enviando dados...";
-            dados.justificativa = justificativa;
+            btn.innerText = "Enviando para Planilha...";
 
             try {
                 await fetch(scriptURL, { method: 'POST', body: JSON.stringify(dados) });
-                alert("✅ Pesquisa enviada com sucesso!");
+                alert("✅ Sucesso! Suas respostas foram salvas.");
                 window.location.reload();
             } catch (err) {
-                alert("Erro ao conectar com o servidor.");
+                alert("Erro ao enviar. Verifique o console.");
                 btn.disabled = false;
             }
         });
