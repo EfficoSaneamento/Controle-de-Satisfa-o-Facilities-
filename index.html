@@ -6,8 +6,12 @@
     <title>Pesquisa Facilities | Effico</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* Cor de seleção baseada no seu cinza #a2a29d */
         .radio-card:checked + .radio-label {
-            background-color: #a2a29d; color: white; border-color: #a2a29d; transform: scale(1.05);
+            background-color: #a2a29d; 
+            color: white; 
+            border-color: #a2a29d; 
+            transform: scale(1.05);
         }
     </style>
 </head>
@@ -15,23 +19,36 @@
 
     <div class="max-w-3xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200">
         <div class="bg-[#687b58] p-8 text-white">
-            <h1 class="text-2xl font-bold">Pesquisa de Satisfação Facilities</h1>
-            <p class="text-whiter-100 mt-2 opacity-100 text-sm">Sua avaliação individual por categoria nos ajuda a priorizar melhorias.</p>
+            <h1 class="text-2xl font-bold uppercase tracking-wide">Pesquisa de Satisfação Facilities</h1>
+            <p class="mt-4 text-sm leading-relaxed opacity-95">
+                O objetivo da pesquisa é avaliar a percpção dos clientes internos sobr os serviços prestados pela area de Facilities, identificando pontos forte, oportuinades de melhoria e prioridade de ação. Sua participação e muito importane. A pesquisa é anonima e suas respostas serão utilizadas para melhoria contínua dos serviços. 
+            </p>
         </div>
 
         <form id="formPesquisa" class="p-6 sm:p-10 space-y-12">
-            <div id="containerPerguntas" class="space-y-12">
-                </div>
+            <div id="containerPerguntas" class="space-y-12"></div>
 
-            <button type="submit" id="btnEnviar" class="w-full bg-[#687b58] hover:bg-[#687b58] text-white font-bold py-5 rounded-2xl shadow-lg transition-all active:scale-95 disabled:bg-slate-300 text-lg">
+            <div class="pt-8 border-t border-slate-200">
+                <div class="border-l-4 border-[#687b58] pl-4 mb-4">
+                    <h3 class="text-lg font-bold text-slate-800 uppercase">Sugestão de Melhoria</h3>
+                    <p class="text-sm text-slate-500 font-medium">Deixe aqui uma sugestão de melhoria ou comentário adicional.</p>
+                </div>
+                <textarea 
+                    name="sugestao_final" 
+                    id="sugestao_final"
+                    placeholder="Sua sugestão..."
+                    class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#687b58] text-slate-700 transition-all"
+                    rows="4"></textarea>
+            </div>
+
+            <button type="submit" id="btnEnviar" class="w-full bg-[#687b58] hover:bg-[#566649] text-white font-bold py-5 rounded-2xl shadow-lg transition-all active:scale-95 disabled:bg-slate-300 text-lg uppercase">
                 Enviar Minhas Respostas
             </button>
         </form>
     </div>
 
     <script>
-        // ATENÇÃO: Substitua pela sua URL de implantação após o deploy
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxzC90vCg1wkepGMaSNn7BNqnC_36ZXaEzrQzLWrcKB8FPeFaLVGpf25imlJVdzddej/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbyyFUPAxTeumVcD3cSNWYoEN64xT2hoc0-3FzB2szMu4l8QCj2gXyTnIFf-i8yVlGDzWg/exec';
 
         const perguntas = [
             { titulo: "Avaliação Geral", texto: "De forma geral, como você avalia os serviços prestados pela área de Facilities?", nome: "avaliacao_geral" },
@@ -41,12 +58,11 @@
             { titulo: "Atendimento", texto: "Como você avalia a cordialidade e a prontidão da equipe de atendimento?", nome: "atendimento" },
             { titulo: "Gestão de Frota", texto: "Como você avalia o processo de solicitação e a qualidade dos veículos da frota?", nome: "frota"},
             { titulo: "Viagens", texto: "Como você avalia a eficiência no processo de reserva de passagens e hospedagens?", nome: "viagens"},
-            { titulo: "Ativos e Equipamentos", texto: "Como você avalia o controle e a entrega de equipamentos (celulares, notebooks e linhas)?", nome: "equipamentos"}
+            { titulo: "Ativos e Equipamentos", texto: "Como você avalia o controle e a entrega de equipamentos (celulares, notebooks e linhas telefônicas)?", nome: "equipamentos"}
         ];
 
         const container = document.getElementById('containerPerguntas');
 
-        // Renderiza cada pergunta com seu campo de justificativa oculto
         perguntas.forEach(p => {
             const div = document.createElement('div');
             div.className = "group space-y-4";
@@ -65,7 +81,7 @@
                         </div>
                     `).join('')}
                 </div>
-                <div id="box_just_${p.nome}" class="hidden mt-4 animate-in fade-in duration-300">
+                <div id="box_just_${p.nome}" class="hidden mt-4 animate-in fade-in slide-in-from-top-2 duration-300">
                     <textarea 
                         name="just_${p.nome}" 
                         id="input_just_${p.nome}"
@@ -77,27 +93,23 @@
             container.appendChild(div);
         });
 
-        // Controla a exibição do campo de texto por pergunta
         function toggleJustificativa(nome, nota) {
             const box = document.getElementById(`box_just_${nome}`);
-            const input = document.getElementById(`input_just_${nome}`);
             if (nota <= 2) {
                 box.classList.remove('hidden');
-                input.focus();
             } else {
                 box.classList.add('hidden');
-                input.value = ""; 
+                document.getElementById(`input_just_${nome}`).value = ""; 
             }
         }
 
-        // Validação e Envio
         document.getElementById('formPesquisa').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btnEnviar');
             const formData = new FormData(e.target);
             const dados = Object.fromEntries(formData.entries());
 
-            // Validação de segurança: verifica se todas as notas < 3 têm texto
+            // Validação de Justificativas para notas 1 e 2
             let pendente = false;
             perguntas.forEach(p => {
                 const nota = parseInt(dados[p.nome]);
@@ -116,7 +128,7 @@
             btn.innerText = "Enviando dados...";
 
             try {
-                const response = await fetch(scriptURL, { method: 'POST', body: JSON.stringify(dados) });
+                await fetch(scriptURL, { method: 'POST', body: JSON.stringify(dados) });
                 alert("✅ Obrigado! Sua pesquisa foi registrada com sucesso.");
                 window.location.reload();
             } catch (err) {
