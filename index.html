@@ -1,37 +1,53 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Pesquisa de Satisfação Facilities</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesquisa Facilities | Effico</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; max-width: 600px; margin: 20px auto; padding: 20px; line-height: 1.6; }
-        .pergunta-bloco { margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .opcoes { display: flex; gap: 10px; margin-top: 5px; }
-        label { font-weight: bold; display: block; }
-        .justificativa-area { margin-top: 20px; display: none; }
-        textarea { width: 100%; height: 80px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc; }
-        button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-size: 16px; }
-        button:hover { background: #0056b3; }
-        .nota-label { display: flex; flex-direction: column; align-items: center; font-weight: normal; font-size: 12px; }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .radio-card:checked + .radio-label {
+            background-color: #2563eb;
+            color: white;
+            border-color: #2563eb;
+            transform: scale(1.1);
+        }
+        .transition-all { transition: all 0.3s ease; }
     </style>
 </head>
-<body>
+<body class="p-4 md:p-8">
 
-    <h2>Pesquisa de Satisfação - Facilities</h2>
-    <form id="formPesquisa">
-        <div id="containerPerguntas"></div>
-
-        <div id="blocoJustificativa" class="justificativa-area">
-            <label>Por favor, justifique sua avaliação negativa:*</label>
-            <textarea id="justificativa" placeholder="Conte-nos o que podemos melhorar..."></textarea>
+    <div class="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div class="bg-blue-600 p-6 text-white">
+            <h1 class="text-2xl font-bold">Pesquisa de Satisfação</h1>
+            <p class="text-blue-100 opacity-90">Sua opinião ajuda a melhorar os serviços de Facilities.</p>
         </div>
 
-        <br>
-        <button type="submit" id="btnEnviar">Enviar Avaliação</button>
-    </form>
+        <form id="formPesquisa" class="p-6 space-y-8">
+            <div id="containerPerguntas" class="space-y-8">
+                </div>
+
+            <div id="blocoJustificativa" class="hidden space-y-3 p-4 bg-red-50 rounded-xl border border-red-100 transition-all">
+                <label class="block text-red-800 font-semibold">
+                    O que podemos melhorar? *
+                </label>
+                <p class="text-sm text-red-600">Detectamos uma avaliação baixa. Por favor, nos conte o motivo para podermos agir.</p>
+                <textarea id="justificativa" 
+                    class="w-full p-3 border border-red-200 rounded-lg focus:ring-2 focus:ring-red-500 outline-none" 
+                    placeholder="Descreva aqui o problema ou sugestão..."></textarea>
+            </div>
+
+            <button type="submit" id="btnEnviar" 
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg transform transition active:scale-95 disabled:bg-gray-400">
+                Enviar Avaliação
+            </button>
+        </form>
+    </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbxUcBOHz2Br_VGdc6slepinlW31sYIePTaAqM4WlOa3NgbLYbsQi3s1Qpwvt_uHmXs9eg/exec';
+        const scriptURL = 'SUA_URL_DO_APPS_SCRIPT_AQUI';
 
         const perguntas = [
             { titulo: "Avaliação Geral", texto: "Como você avalia a área de Facilities?", nome: "avaliacao_geral" },
@@ -39,73 +55,79 @@
             { titulo: "Limpeza", texto: "Como avalia a limpeza dos ambientes?", nome: "limpeza" },
             { titulo: "Manutenção", texto: "Como avalia a manutenção predial?", nome: "manutencao" },
             { titulo: "Atendimento", texto: "A equipe é acessível e cordial?", nome: "atendimento" },
-            { titulo: "Frota", texto: "Avaliação das solicitações de frota:", nome: "frota" },
-            { titulo: "Viagens", texto: "Avaliação de passagens e hospedagens:", nome: "viagens" },
-            { titulo: "Equipamentos", texto: "Controle de equipamentos (Celulares/Notebooks):", nome: "equipamentos" }
+            { titulo: "Gestão de Frota", texto: "Processo de locação e qualidade dos veículos:", nome: "frota" },
+            { titulo: "Viagens", texto: "Passagens e hospedagens:", nome: "viagens" },
+            { titulo: "Equipamentos", texto: "Controle de Celulares/Notebooks:", nome: "equipamentos" }
         ];
 
         const container = document.getElementById('containerPerguntas');
 
-        // Renderiza as perguntas
         perguntas.forEach(p => {
             const div = document.createElement('div');
-            div.className = 'pergunta-bloco';
+            div.className = 'space-y-3';
             div.innerHTML = `
-                <label>${p.titulo}</label>
-                <small>${p.texto}</small>
-                <div class="opcoes">
+                <div class="flex flex-col">
+                    <span class="text-lg font-semibold text-gray-800">${p.titulo}</span>
+                    <span class="text-sm text-gray-500">${p.texto}</span>
+                </div>
+                <div class="flex justify-between gap-2">
                     ${[1, 2, 3, 4, 5].map(nota => `
-                        <label class="nota-label">
-                            <input type="radio" name="${p.nome}" value="${nota}" required onclick="verificarNotas()">
-                            ${nota}
-                        </label>
+                        <div class="flex-1">
+                            <input type="radio" name="${p.nome}" id="${p.nome}_${nota}" value="${nota}" class="hidden radio-card" required onchange="verificarNotas()">
+                            <label for="${p.nome}_${nota}" class="radio-label flex items-center justify-center p-3 border-2 border-gray-200 rounded-xl cursor-pointer font-bold text-gray-600 hover:bg-gray-50 transition-all">
+                                ${nota}
+                            </label>
+                        </div>
                     `).join('')}
                 </div>
             `;
             container.appendChild(div);
         });
 
-        // Mostra justificativa se houver nota 1 ou 2
         function verificarNotas() {
             const formData = new FormData(document.getElementById('formPesquisa'));
             let temNotaBaixa = false;
             for (let value of formData.values()) {
                 if (parseInt(value) <= 2) temNotaBaixa = true;
             }
-            document.getElementById('blocoJustificativa').style.display = temNotaBaixa ? 'block' : 'none';
+            
+            const bloco = document.getElementById('blocoJustificativa');
+            if (temNotaBaixa) {
+                bloco.classList.remove('hidden');
+            } else {
+                bloco.classList.add('hidden');
+            }
         }
 
-        // Envio do formulário
-        document.getElementById('formPesquisa').addEventListener('submit', e => {
+        document.getElementById('formPesquisa').addEventListener('submit', async e => {
             e.preventDefault();
             const btn = document.getElementById('btnEnviar');
-            btn.disabled = true;
-            btn.innerText = "Enviando...";
+            const justificativaTxt = document.getElementById('justificativa').value;
 
+            // Validação
             const formData = new FormData(e.target);
             const dados = Object.fromEntries(formData.entries());
-            dados.justificativa = document.getElementById('justificativa').value;
-
-            // Validação da Justificativa
             let temNotaBaixa = Object.values(dados).some(v => parseInt(v) <= 2);
-            if (temNotaBaixa && dados.justificativa.trim().length < 5) {
-                alert("Por favor, preencha a justificativa para as notas baixas.");
-                btn.disabled = false;
-                btn.innerText = "Enviar Avaliação";
+
+            if (temNotaBaixa && justificativaTxt.trim().length < 5) {
+                alert("Por favor, descreva o motivo da nota baixa.");
                 return;
             }
 
-            fetch(scriptURL, { method: 'POST', body: JSON.stringify(dados)})
-                .then(response => {
-                    alert("Obrigado pela sua participação!");
-                    e.target.reset();
-                    document.getElementById('blocoJustificativa').style.display = 'none';
-                })
-                .catch(error => alert("Erro ao enviar! Tente novamente."))
-                .finally(() => {
-                    btn.disabled = false;
-                    btn.innerText = "Enviar Avaliação";
-                });
+            btn.disabled = true;
+            btn.innerText = "Processando...";
+
+            dados.justificativa = justificativaTxt;
+
+            try {
+                await fetch(scriptURL, { method: 'POST', body: JSON.stringify(dados)});
+                alert("Avaliação enviada com sucesso! Obrigado.");
+                window.location.reload();
+            } catch (error) {
+                alert("Erro ao enviar. Verifique sua conexão.");
+                btn.disabled = false;
+                btn.innerText = "Enviar Avaliação";
+            }
         });
     </script>
 </body>
