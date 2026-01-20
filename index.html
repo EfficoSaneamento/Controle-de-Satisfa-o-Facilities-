@@ -6,7 +6,6 @@
     <title>Pesquisa Facilities | Effico</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Cor de seleção baseada no seu cinza #a2a29d */
         .radio-card:checked + .radio-label {
             background-color: #a2a29d; 
             color: white; 
@@ -21,7 +20,7 @@
         <div class="bg-[#687b58] p-8 text-white">
             <h1 class="text-2xl font-bold uppercase tracking-wide">Pesquisa de Satisfação Facilities</h1>
             <p class="mt-4 text-sm leading-relaxed opacity-95">
-                O objetivo da pesquisa é avaliar a percpção dos clientes internos sobr os serviços prestados pela area de Facilities, identificando pontos forte, oportuinades de melhoria e prioridade de ação. Sua participação e muito importane. A pesquisa é anonima e suas respostas serão utilizadas para melhoria contínua dos serviços. 
+                Objetivo da pesquisa é avaliar a percepção dos clientes internos sobre os serviços prestados pela área de Facilities, identificando pontos fortes, oportunidades de melhoria e prioridades de ação. Sua participação é muito importante. A pesquisa é anônima e suas respostas serão utilizadas exclusivamente para melhoria contínua dos serviços. 
             </p>
         </div>
 
@@ -41,7 +40,7 @@
                     rows="4"></textarea>
             </div>
 
-            <button type="submit" id="btnEnviar" class="w-full bg-[#687b58] hover:bg-[#566649] text-white font-bold py-5 rounded-2xl shadow-lg transition-all active:scale-95 disabled:bg-slate-300 text-lg uppercase">
+            <button type="submit" id="btnEnviar" class="w-full bg-[#687b58] hover:bg-[#566649] text-white font-bold py-5 rounded-2xl shadow-lg transition-all active:scale-95 disabled:bg-slate-300 text-lg uppercase tracking-widest">
                 Enviar Minhas Respostas
             </button>
         </form>
@@ -63,6 +62,15 @@
 
         const container = document.getElementById('containerPerguntas');
 
+        // Escala Likert para o cabeçalho das notas
+        const notasConfig = [
+            { v: 1, t: "Muito Insatisfeito" },
+            { v: 2, t: "Insatisfeito" },
+            { v: 3, t: "Neutro" },
+            { v: 4, t: "Satisfeito" },
+            { v: 5, t: "Muito Satisfeito" }
+        ];
+
         perguntas.forEach(p => {
             const div = document.createElement('div');
             div.className = "group space-y-4";
@@ -72,11 +80,12 @@
                     <p class="text-sm text-slate-500">${p.texto}</p>
                 </div>
                 <div class="flex justify-between gap-2 sm:gap-4">
-                    ${[1, 2, 3, 4, 5].map(n => `
-                        <div class="flex-1">
-                            <input type="radio" name="${p.nome}" id="${p.nome}_${n}" value="${n}" class="hidden radio-card" required onchange="toggleJustificativa('${p.nome}', ${n})">
-                            <label for="${p.nome}_${n}" class="radio-label flex items-center justify-center p-4 border-2 border-slate-200 rounded-xl cursor-pointer font-bold text-slate-600 hover:bg-slate-50 transition-all text-xl">
-                                ${n}
+                    ${notasConfig.map(n => `
+                        <div class="flex-1 text-center">
+                            <input type="radio" name="${p.nome}" id="${p.nome}_${n.v}" value="${n.v}" class="hidden radio-card" required onchange="toggleJustificativa('${p.nome}', ${n.v})">
+                            <label for="${p.nome}_${n.v}" class="radio-label flex flex-col items-center justify-center p-2 sm:p-4 border-2 border-slate-200 rounded-xl cursor-pointer font-bold text-slate-600 hover:bg-slate-50 transition-all">
+                                <span class="text-xl">${n.v}</span>
+                                <span class="text-[10px] uppercase mt-1 hidden sm:block font-normal">${n.t.split(' ')[0]}</span>
                             </label>
                         </div>
                     `).join('')}
@@ -85,7 +94,7 @@
                     <textarea 
                         name="just_${p.nome}" 
                         id="input_just_${p.nome}"
-                        placeholder="Por que você deu nota baixa para ${p.titulo.toLowerCase()}? (Obrigatório)"
+                        placeholder="Por que você deu nota baixa para ${p.titulo.toLowerCase()}? (Mínimo 5 caracteres)"
                         class="w-full p-4 bg-orange-50 border border-orange-200 rounded-xl outline-none focus:ring-2 focus:ring-orange-400 text-sm italic"
                         rows="2"></textarea>
                 </div>
@@ -95,11 +104,14 @@
 
         function toggleJustificativa(nome, nota) {
             const box = document.getElementById(`box_just_${nome}`);
-            if (nota <= 2) {
+            const input = document.getElementById(`input_just_${nome}`);
+            if (parseInt(nota) <= 2) {
                 box.classList.remove('hidden');
+                input.required = true;
             } else {
                 box.classList.add('hidden');
-                document.getElementById(`input_just_${nome}`).value = ""; 
+                input.required = false;
+                input.value = ""; 
             }
         }
 
@@ -109,7 +121,7 @@
             const formData = new FormData(e.target);
             const dados = Object.fromEntries(formData.entries());
 
-            // Validação de Justificativas para notas 1 e 2
+            // Validação de segurança extra
             let pendente = false;
             perguntas.forEach(p => {
                 const nota = parseInt(dados[p.nome]);
@@ -120,7 +132,7 @@
             });
 
             if (pendente) {
-                alert("⚠️ Por favor, preencha a justificativa para todas as notas baixas (1 ou 2).");
+                alert("⚠️ Por favor, explique o motivo das notas 1 ou 2 no campo que apareceu abaixo delas.");
                 return;
             }
 
@@ -132,7 +144,7 @@
                 alert("✅ Obrigado! Sua pesquisa foi registrada com sucesso.");
                 window.location.reload();
             } catch (err) {
-                alert("Erro ao enviar. Tente novamente em instantes.");
+                alert("Erro ao enviar. Verifique se o Script do Google foi implantado corretamente.");
                 btn.disabled = false;
                 btn.innerText = "Enviar Minhas Respostas";
             }
