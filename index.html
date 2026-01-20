@@ -10,44 +10,41 @@
             background-color: #a2a29d; 
             color: white; 
             border-color: #a2a29d; 
-            transform: scale(1.05);
+            transform: scale(1.02);
         }
+        .text-xxs { font-size: 0.65rem; }
     </style>
 </head>
-<body class="bg-slate-100 p-4 sm:p-8">
+<body class="bg-slate-100 p-4 sm:p-6">
 
-    <div class="max-w-3xl mx-auto bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200">
-        <div class="bg-[#687b58] p-8 text-white">
-            <h1 class="text-2xl font-bold uppercase tracking-wide">Pesquisa de Satisfação Facilities</h1>
-            <p class="mt-4 text-sm leading-relaxed opacity-95">
-                Objetivo da pesquisa é avaliar a percepção dos clientes internos sobre os serviços prestados pela área de Facilities, identificando pontos fortes, oportunidades de melhoria e prioridades de ação. Sua participação é muito importante. A pesquisa é anônima e suas respostas serão utilizadas exclusivamente para melhoria contínua dos serviços. 
+    <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden border border-slate-200">
+        <div class="bg-[#687b58] p-6 text-white border-b-4 border-[#a2a29d]">
+            <h1 class="text-xl font-bold uppercase">Pesquisa de Satisfação Facilities</h1>
+            <p class="mt-2 text-xs leading-relaxed opacity-90">
+                Avalie os serviços prestados pela área de Facilities. Sua participação é anônima e fundamental para nossa melhoria contínua.
             </p>
         </div>
 
-        <form id="formPesquisa" class="p-6 sm:p-10 space-y-12">
-            <div id="containerPerguntas" class="space-y-12"></div>
+        <form id="formPesquisa" class="p-6 space-y-10">
+            <div id="containerPerguntas" class="space-y-10"></div>
 
             <div class="pt-8 border-t border-slate-200">
-                <div class="border-l-4 border-[#687b58] pl-4 mb-4">
-                    <h3 class="text-lg font-bold text-slate-800 uppercase">Sugestão de Melhoria</h3>
-                    <p class="text-sm text-slate-500 font-medium">Deixe aqui uma sugestão de melhoria ou comentário adicional.</p>
+                <div class="border-l-4 border-[#687b58] pl-3 mb-4">
+                    <h3 class="text-md font-bold text-slate-800 uppercase">Deixe uma sugestão de melhoria</h3>
                 </div>
-                <textarea 
-                    name="sugestao_final" 
-                    id="sugestao_final"
-                    placeholder="Sua sugestão..."
-                    class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:ring-2 focus:ring-[#687b58] text-slate-700 transition-all"
-                    rows="4"></textarea>
+                <textarea name="sugestao_final" id="sugestao_final" placeholder="Sua sugestão..."
+                    class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-[#687b58] text-sm"
+                    rows="3"></textarea>
             </div>
 
-            <button type="submit" id="btnEnviar" class="w-full bg-[#687b58] hover:bg-[#566649] text-white font-bold py-5 rounded-2xl shadow-lg transition-all active:scale-95 disabled:bg-slate-300 text-lg uppercase tracking-widest">
-                Enviar Minhas Respostas
+            <button type="submit" id="btnEnviar" class="w-full bg-[#687b58] hover:bg-[#566649] text-white font-bold py-4 rounded-xl shadow-lg transition-all active:scale-95 disabled:bg-slate-300 uppercase tracking-widest">
+                Enviar Avaliação
             </button>
         </form>
     </div>
 
     <script>
-        const scriptURL = 'https://script.google.com/macros/s/AKfycbydzSjG3pwiRg_ie9JyZgoJ99i_Czsrgvy9x2aMipC0MYcyuHYc9zOhmqe_xaa1kudAuA/exec';
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwbtqWZQLkVfeDaY5Pfssy8PQ3d1oEgZWSsaFoSCDu_9Zy2JfOQxLRozAXvQ4xhBnKnPg/exec';
 
         const perguntas = [
             { titulo: "Avaliação Geral", texto: "De forma geral, como você avalia os serviços prestados pela área de Facilities?", nome: "avaliacao_geral" },
@@ -60,42 +57,33 @@
             { titulo: "Ativos e Equipamentos", texto: "Como você avalia o controle e a entrega de equipamentos (celulares, notebooks e linhas telefônicas)?", nome: "equipamentos"}
         ];
 
-        const container = document.getElementById('containerPerguntas');
+        const legendas = ["MUITO INSAT.", "INSATISFEITO", "NEUTRO", "SATISFEITO", "MUITO SATIS."];
 
-        // Escala Likert para o cabeçalho das notas
-        const notasConfig = [
-            { v: 1, t: "Muito Insatisfeito" },
-            { v: 2, t: "Insatisfeito" },
-            { v: 3, t: "Neutro" },
-            { v: 4, t: "Satisfeito" },
-            { v: 5, t: "Muito Satisfeito" }
-        ];
+        const container = document.getElementById('containerPerguntas');
 
         perguntas.forEach(p => {
             const div = document.createElement('div');
-            div.className = "group space-y-4";
+            div.className = "space-y-3";
             div.innerHTML = `
-                <div class="border-l-4 border-[#687b58] pl-4">
-                    <h3 class="text-lg font-bold text-slate-800">${p.titulo}</h3>
-                    <p class="text-sm text-slate-500">${p.texto}</p>
+                <div class="border-l-4 border-[#687b58] pl-3">
+                    <h3 class="text-md font-bold text-slate-800">${p.titulo}</h3>
+                    <p class="text-xs text-slate-500">${p.texto}</p>
                 </div>
-                <div class="flex justify-between gap-2 sm:gap-4">
-                    ${notasConfig.map(n => `
+                <div class="flex justify-between gap-1 sm:gap-2">
+                    ${[1, 2, 3, 4, 5].map((n, i) => `
                         <div class="flex-1 text-center">
-                            <input type="radio" name="${p.nome}" id="${p.nome}_${n.v}" value="${n.v}" class="hidden radio-card" required onchange="toggleJustificativa('${p.nome}', ${n.v})">
-                            <label for="${p.nome}_${n.v}" class="radio-label flex flex-col items-center justify-center p-2 sm:p-4 border-2 border-slate-200 rounded-xl cursor-pointer font-bold text-slate-600 hover:bg-slate-50 transition-all">
-                                <span class="text-xl">${n.v}</span>
-                                <span class="text-[10px] uppercase mt-1 hidden sm:block font-normal">${n.t.split(' ')[0]}</span>
+                            <input type="radio" name="${p.nome}" id="${p.nome}_${n}" value="${n}" class="hidden radio-card" required onchange="toggleJustificativa('${p.nome}', ${n})">
+                            <label for="${p.nome}_${n}" class="radio-label flex flex-col items-center justify-center py-3 px-1 border border-slate-200 rounded-lg cursor-pointer transition-all h-20 sm:h-24">
+                                <span class="text-lg font-bold">${n}</span>
+                                <span class="text-xxs uppercase mt-1 leading-tight text-center px-1">${legendas[i]}</span>
                             </label>
                         </div>
                     `).join('')}
                 </div>
-                <div id="box_just_${p.nome}" class="hidden mt-4 animate-in fade-in slide-in-from-top-2 duration-300">
-                    <textarea 
-                        name="just_${p.nome}" 
-                        id="input_just_${p.nome}"
-                        placeholder="Por que você deu nota baixa para ${p.titulo.toLowerCase()}? (Mínimo 5 caracteres)"
-                        class="w-full p-4 bg-orange-50 border border-orange-200 rounded-xl outline-none focus:ring-2 focus:ring-orange-400 text-sm italic"
+                <div id="box_just_${p.nome}" class="hidden mt-3 animate-in fade-in duration-300">
+                    <textarea name="just_${p.nome}" id="input_just_${p.nome}" 
+                        placeholder="Por favor, conte-nos o motivo da nota baixa para ${p.titulo.toLowerCase()}..."
+                        class="w-full p-3 bg-orange-50 border border-orange-200 rounded-lg text-sm italic outline-none focus:ring-1 focus:ring-orange-400"
                         rows="2"></textarea>
                 </div>
             `;
@@ -104,15 +92,7 @@
 
         function toggleJustificativa(nome, nota) {
             const box = document.getElementById(`box_just_${nome}`);
-            const input = document.getElementById(`input_just_${nome}`);
-            if (parseInt(nota) <= 2) {
-                box.classList.remove('hidden');
-                input.required = true;
-            } else {
-                box.classList.add('hidden');
-                input.required = false;
-                input.value = ""; 
-            }
+            box.classList.toggle('hidden', nota > 2);
         }
 
         document.getElementById('formPesquisa').addEventListener('submit', async (e) => {
@@ -121,32 +101,24 @@
             const formData = new FormData(e.target);
             const dados = Object.fromEntries(formData.entries());
 
-            // Validação de segurança extra
+            // Validação de Justificativas
             let pendente = false;
             perguntas.forEach(p => {
-                const nota = parseInt(dados[p.nome]);
-                const texto = dados[`just_${p.nome}`] ? dados[`just_${p.nome}`].trim() : "";
-                if (nota <= 2 && texto.length < 5) {
-                    pendente = true;
-                }
+                if (parseInt(dados[p.nome]) <= 2 && (!dados[`just_${p.nome}`] || dados[`just_${p.nome}`].trim().length < 3)) pendente = true;
             });
 
-            if (pendente) {
-                alert("⚠️ Por favor, explique o motivo das notas 1 ou 2 no campo que apareceu abaixo delas.");
-                return;
-            }
+            if (pendente) { alert("⚠️ Por favor, justifique as notas baixas."); return; }
 
             btn.disabled = true;
-            btn.innerText = "Enviando dados...";
+            btn.innerText = "ENVIANDO...";
 
             try {
                 await fetch(scriptURL, { method: 'POST', body: JSON.stringify(dados) });
-                alert("✅ Obrigado! Sua pesquisa foi registrada com sucesso.");
+                alert("✅ Recebido! Obrigado.");
                 window.location.reload();
             } catch (err) {
-                alert("Erro ao enviar. Verifique se o Script do Google foi implantado corretamente.");
+                alert("Erro ao enviar.");
                 btn.disabled = false;
-                btn.innerText = "Enviar Minhas Respostas";
             }
         });
     </script>
